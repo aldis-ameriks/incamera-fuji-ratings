@@ -13,6 +13,7 @@ function main()
 	local catalog = LrApplication.activeCatalog()
 	local targetPhotos = catalog.targetPhotos
 	for i, photo in ipairs(targetPhotos) do
+		-- TODO: show some kind of progress bar and/or notification once the ratings are converted
 		LrTasks.startAsyncTask(function()
 			local filePath = photo.path
 			local fileWithoutExtension = GetFilePathWithoutExtension(filePath);
