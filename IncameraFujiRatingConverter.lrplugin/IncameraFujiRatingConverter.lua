@@ -7,7 +7,12 @@ logger:enable( 'print' )
 logger:info('-------------------- Execution start --------------------')
 
 -- TODO: create a settings panel in plugin manager to set this value
-local exiftoolPath = '/usr/local/bin/exiftool'
+local exiftoolPath
+if (MAC_ENV) then
+	exiftoolPath = '/usr/local/bin/exiftool'
+else
+	exiftoolPath = 'C:\\\Windows\\\exiftool.exe'
+end
 
 function main()
 	local catalog = LrApplication.activeCatalog()
