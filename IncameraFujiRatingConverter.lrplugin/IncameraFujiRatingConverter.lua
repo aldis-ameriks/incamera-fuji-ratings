@@ -9,83 +9,83 @@ logger:info('-------------------- Execution start --------------------')
 -- TODO: create a settings panel in plugin manager to set this value
 local exiftoolPath
 if (MAC_ENV) then
-	exiftoolPath = '/usr/local/bin/exiftool'
+  exiftoolPath = '/usr/local/bin/exiftool'
 else
-	exiftoolPath = 'C:\\\Windows\\\exiftool.exe'
+  exiftoolPath = 'C:\\\Windows\\\exiftool.exe'
 end
 
 function main()
-	local catalog = LrApplication.activeCatalog()
-	local targetPhotos = catalog.targetPhotos
-	for i, photo in ipairs(targetPhotos) do
-		-- TODO: show some kind of progress bar and/or notification once the ratings are converted
-		LrTasks.startAsyncTask(function()
-			local filePath = photo.path
-			local fileWithoutExtension = GetFilePathWithoutExtension(filePath);
-			setRatingForJpgAndRaf(fileWithoutExtension)
-		end)
-	end
+  local catalog = LrApplication.activeCatalog()
+  local targetPhotos = catalog.targetPhotos
+  for i, photo in ipairs(targetPhotos) do
+    -- TODO: show some kind of progress bar and/or notification once the ratings are converted
+    LrTasks.startAsyncTask(function()
+      local filePath = photo.path
+      local fileWithoutExtension = GetFilePathWithoutExtension(filePath);
+      setRatingForJpgAndRaf(fileWithoutExtension)
+    end)
+  end
 end
 
 function GetFilePathWithoutExtension(url)
-	return url:match("^([^.]+)")
+  return url:match("^([^.]+)")
 end
 
 function setRatingForJpgAndRaf(fileWithoutExtension)
-	local jpgFile = GetJpgFile(fileWithoutExtension)
+  local jpgFile = GetJpgFile(fileWithoutExtension)
 
-	if jpgFile then
-		local rafFile = GetRafFile(fileWithoutExtension)
-		local cmdToGetRating = getCmdForFetchingIncameraRating(jpgFile)
-		setRating(jpgFile, cmdToGetRating)
+  if jpgFile then
+    local rafFile = GetRafFile(fileWithoutExtension)
+    local cmdToGetRating = getCmdForFetchingIncameraRating(jpgFile)
+    setRating(jpgFile, cmdToGetRating)
 
-		if rafFile then
-			local xmpFile = fileWithoutExtension .. '.xmp'
-			setRating(xmpFile, cmdToGetRating)
-		end
-	end
+    if rafFile then
+      local xmpFile = fileWithoutExtension .. '.xmp'
+      setRating(xmpFile, cmdToGetRating)
+    end
+  end
 end
 
 function GetJpgFile(fileWithoutExtension)
-	-- TODO: make this work by ignoring letter case
-	local supportedJpgFileExtensions = {'.JPG', '.jpg'}
-	return GetFile(fileWithoutExtension, supportedJpgFileExtensions)
+  -- TODO: make this work by ignoring letter case
+  local supportedJpgFileExtensions = {'.JPG', '.jpg'}
+  return GetFile(fileWithoutExtension, supportedJpgFileExtensions)
 end
 
 function GetRafFile(fileWithoutExtension)
-	-- TODO: make this work by ignoring letter case
-	local supportedRafFileExtensions = {'.RAF', '.raf'}
-	return GetFile(fileWithoutExtension, supportedRafFileExtensions)
+  -- TODO: make this work by ignoring letter case
+  local supportedRafFileExtensions = {'.RAF', '.raf'}
+  return GetFile(fileWithoutExtension, supportedRafFileExtensions)
 end
 
 function GetFile(fileWithoutExtension, extensions)
-	for i, extension in ipairs(extensions) do
-		local fileWithExtension = fileWithoutExtension .. extension
+  for i, extension in ipairs(extensions) do
+    local fileWithExtension = fileWithoutExtension .. extension
 		if LrFileUtils.exists(fileWithExtension) and LrFileUtils.isReadable(fileWithExtension) then
-			logger:info('Found file: ', fileWithExtension)
-			return fileWithExtension
-		end
-	end
+      logger:info('Found file: ', fileWithExtension)
+      return fileWithExtension
+    end
+  end
 end
 
 function getCmdForFetchingIncameraRating(jpgFile)
-	return exiftoolPath .. ' -rating ' .. jpgFile .. ' | grep -o "[^ ]*$"'
+  return exiftoolPath .. ' -rating ' .. jpgFile .. ' | grep -o "[^ ]*$"'
 end
 
 function setRating(file, cmdToGetRating)
-	-- TODO: find a way to get the results of cmdToGetRating so we don't have to repeat/nest the bash statement
+  -- TODO: find a way to get the results of cmdToGetRating so we don't have to repeat/nest the bash statement
   logger:info('Setting rating for file: ', file)
-	LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=$('.. cmdToGetRating ..') ' .. file)
+  LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=$('.. cmdToGetRating ..') ' .. file)
 end
 
 -- THIS FUNCTION DOES NOT WORK
 -- LrTasks.execute does not return the output of exiftool
--- TODO: how to read output from LrTasks.execute
+-- TODO: how to read output from LrTasks.execute?
 function GetRatingFromFile(file)
-	local cmd = exiftoolPath .. ' -rating ' .. file .. ' | grep -o "[^ ]*$"'
-	local rating = LrTasks.execute(cmd)
-	logger:info('Found rating: ', rating)
-	return rating
+  local cmd = exiftoolPath .. ' -rating ' .. file .. ' | grep -o "[^ ]*$"'
+  local rating = LrTasks.execute(cmd)
+  logger:info('Found rating: ', rating)
+  return rating
 end
 
 main()
