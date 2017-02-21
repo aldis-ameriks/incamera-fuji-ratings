@@ -70,14 +70,14 @@ end
 
 function getCmdForFetchingIncameraRating(jpgFile)
   -- FIXME: this is not going to work on windows
-  return exiftoolPath .. ' -rating ' .. jpgFile .. ' | grep -o "[^ ]*$"'
+  return exiftoolPath .. ' -rating "' .. jpgFile .. '" | grep -o "[^ ]*$"'
 end
 
 function setRating(file, cmdToGetRating)
   -- TODO: find a way to get the results of cmdToGetRating so we don't have to repeat/nest the bash statement
   logger:info('Setting rating for file: ', file)
   -- FIXME: this is not going to work on windows (nested bash command)
-  LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=$('.. cmdToGetRating ..') ' .. file)
+  LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=$('.. cmdToGetRating ..') "' .. file .. '"')
 end
 
 -- THIS FUNCTION DOES NOT WORK
