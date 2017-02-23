@@ -27,7 +27,7 @@ function main()
   end
 end
 
-function GetFilePathWithoutExtension(url)
+function getFilePathWithoutExtension(url)
   return url:match("^([^.]+)")
 end
 
@@ -48,19 +48,19 @@ function setRatingForJpgAndRaf(fileWithoutExtension)
   end
 end
 
-function GetJpgFile(fileWithoutExtension)
+function getJpgFile(fileWithoutExtension)
   -- TODO: make this work by ignoring letter case
   local supportedJpgFileExtensions = {'.JPG', '.jpg'}
   return GetFile(fileWithoutExtension, supportedJpgFileExtensions)
 end
 
-function GetRafFile(fileWithoutExtension)
+function getRafFile(fileWithoutExtension)
   -- TODO: make this work by ignoring letter case
   local supportedRafFileExtensions = {'.RAF', '.raf'}
   return GetFile(fileWithoutExtension, supportedRafFileExtensions)
 end
 
-function GetFile(fileWithoutExtension, extensions)
+function getFile(fileWithoutExtension, extensions)
   for i, extension in ipairs(extensions) do
     local fileWithExtension = fileWithoutExtension .. extension
 		if LrFileUtils.exists(fileWithExtension) and LrFileUtils.isReadable(fileWithExtension) then
@@ -75,7 +75,7 @@ function setRating(file, rating)
   LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=' .. rating .. ' "' .. file .. '"')
 end
 
-function GetRatingFromFile(file)
+function getRatingFromFile(file)
   local tmpFileForRatingOutput = os.tmpname()
   local result = LrTasks.execute(exiftoolPath .. ' -rating "' .. file .. '" > ' .. tmpFileForRatingOutput)
   if (result ~= 0) then
