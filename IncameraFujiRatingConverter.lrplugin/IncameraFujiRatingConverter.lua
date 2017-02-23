@@ -83,7 +83,9 @@ function GetRatingFromFile(file)
     return nil
   else
     local exiftoolOutput = readFile(tmpFileForRatingOutput)
-    return tonumber(exiftoolOutput:sub(-2))
+    -- There are spaces around the number - tonumber gets rid of those spaces
+    -- and converts to int. Mac has a single character, Windows has two, thus -3.
+    return tonumber(exiftoolOutput:sub(-3))
   end
 end
 
