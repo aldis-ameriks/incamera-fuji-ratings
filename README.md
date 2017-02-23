@@ -3,7 +3,7 @@
 I have Fujifilm X-T2 and I have always wished there was a way to make the in-camera ratings readable by Lightroom. I prefer rating images on the go to spend less time afterwards going through the images in front of the screen.
 This plugin started as a bash script, which suited my needs, but was not user friendly for other people to use, thus the work on plugin started.
 
-**NOTE: This plugin is still work in progress, but it should work.**
+**NOTE: This plugin is still work in progress, but it should work if you meet the prerequesites.**
 
 ### Prerequesites:
 * Exiftool installed and binary placed in `/usr/local/bin/exiftool` (MAC) or `C:\Windows\exiftool.exe` (Windows). Tested with current latest version `10.43`;
