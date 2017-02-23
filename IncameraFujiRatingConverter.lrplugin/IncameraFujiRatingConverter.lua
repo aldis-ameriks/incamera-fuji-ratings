@@ -2,9 +2,9 @@ local LrTasks = import 'LrTasks'
 local LrFileUtils = import 'LrFileUtils'
 local LrApplication = import 'LrApplication'
 
-local logger = import 'LrLogger'( 'IncameraFujiRatingConverter' )
-logger:enable( 'print' )
-logger:info('-------------------- Execution start --------------------')
+local logger = import 'LrLogger'('IncameraFujiRatingConverter')
+logger:enable('print')
+logger:info(' -------------------- Execution start --------------------')
 
 -- TODO: create a settings panel in plugin manager to set this value
 local exiftoolPath
@@ -35,13 +35,15 @@ function setRatingForJpgAndRaf(fileWithoutExtension)
   local jpgFile = GetJpgFile(fileWithoutExtension)
 
   if jpgFile then
-    local rafFile = GetRafFile(fileWithoutExtension)
-    local cmdToGetRating = getCmdForFetchingIncameraRating(jpgFile)
-    setRating(jpgFile, cmdToGetRating)
+    local rating = GetRatingFromFile(jpgFile)
+    if rating then
+      local rafFile = GetRafFile(fileWithoutExtension)
+      setRating(jpgFile, rating)
 
-    if rafFile then
-      local xmpFile = fileWithoutExtension .. '.xmp'
-      setRating(xmpFile, cmdToGetRating)
+      if rafFile then
+        local xmpFile = fileWithoutExtension .. '.xmp'
+        setRating(xmpFile, rating)
+      end
     end
   end
 end
@@ -62,32 +64,35 @@ function GetFile(fileWithoutExtension, extensions)
   for i, extension in ipairs(extensions) do
     local fileWithExtension = fileWithoutExtension .. extension
 		if LrFileUtils.exists(fileWithExtension) and LrFileUtils.isReadable(fileWithExtension) then
-      logger:info('Found file: ', fileWithExtension)
+      logger:info(' Found file: ', fileWithExtension)
       return fileWithExtension
     end
   end
 end
 
-function getCmdForFetchingIncameraRating(jpgFile)
-  -- FIXME: this is not going to work on windows
-  return exiftoolPath .. ' -rating "' .. jpgFile .. '" | grep -o "[^ ]*$"'
+function setRating(file, rating)
+  logger:info(' Setting rating for file: ', file, ' rating: ', rating)
+  LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=' .. rating .. ' "' .. file .. '"')
 end
 
-function setRating(file, cmdToGetRating)
-  -- TODO: find a way to get the results of cmdToGetRating so we don't have to repeat/nest the bash statement
-  logger:info('Setting rating for file: ', file)
-  -- FIXME: this is not going to work on windows (nested bash command)
-  LrTasks.execute(exiftoolPath .. ' -overwrite_original -rating=$('.. cmdToGetRating ..') "' .. file .. '"')
-end
-
--- THIS FUNCTION DOES NOT WORK
--- LrTasks.execute does not return the output of exiftool
--- TODO: how to read output from LrTasks.execute?
 function GetRatingFromFile(file)
-  local cmd = exiftoolPath .. ' -rating ' .. file .. ' | grep -o "[^ ]*$"'
-  local rating = LrTasks.execute(cmd)
-  logger:info('Found rating: ', rating)
-  return rating
+  local tmpFileForRatingOutput = os.tmpname()
+  local result = LrTasks.execute(exiftoolPath .. ' -rating "' .. file .. '" > ' .. tmpFileForRatingOutput)
+  if (result ~= 0) then
+    logger:error(' Error when writing rating to tmp file', result)
+    return nil
+  else
+    local exiftoolOutput = readFile(tmpFileForRatingOutput)
+    return tonumber(exiftoolOutput:sub(-2))
+  end
+end
+
+function readFile(path)
+    local file = io.open(path, "rb")
+    if not file then return nil end
+    local content = file:read "*a"
+    file:close()
+    return content
 end
 
 main()
