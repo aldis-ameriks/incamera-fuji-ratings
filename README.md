@@ -13,7 +13,7 @@ This plugin started as a bash script, which suited my needs, but was not user fr
 * Clone repository;
 * Open Lightroom and install the plugin. This can be done by opening `Plug-in Manager`, clicking `Add` and specifying the plugin directory `IncameraFujiRatingConverter.lrplugin`. Make sure there are no errors;
 * The plugin must be used in `Library` view. Selected the images for which the ratings should be converted and execute the plugin which can be accessed from menu bar: `Library -> Plug-in Extras -> Convert Fuji incamera ratings`;
-* After plugin executes, the ratings should appear.
+* After plugin executes, there should be an icon on images, meaning that metadata has been updated by an external application. The metadata can be loaded for each image individually or simply by syncing the whole directory for metadata changes.
 
 **NOTE: The ratings cannot be recovered if they have already been rewritten inside Lightroom or in any other software**
 
