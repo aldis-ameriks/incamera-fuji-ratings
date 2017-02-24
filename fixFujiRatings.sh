@@ -17,7 +17,7 @@ shopt -s nocaseglob
 if [ "$#" -lt 1 ]; then
     PATH_TO_DIRECTORY=$PWD
 else
-	PATH_TO_DIRECTORY=$1	
+	PATH_TO_DIRECTORY=$1
 fi
 
 for FUJI_JPG in "$PATH_TO_DIRECTORY"/*.JPG; do
@@ -27,7 +27,7 @@ for FUJI_JPG in "$PATH_TO_DIRECTORY"/*.JPG; do
 	fi
 
 
-	FUJI_RATING_OUTPUT=$(exiftool -rating $FUJI_JPG)
+	FUJI_RATING_OUTPUT=$(exiftool -rating "$FUJI_JPG")
 	RATING="${FUJI_RATING_OUTPUT: -1}"
 
 	# Adobe does not work well with the default fuji way of writing ratings to
@@ -37,12 +37,12 @@ for FUJI_JPG in "$PATH_TO_DIRECTORY"/*.JPG; do
 	FUJI_RAF=$FILE_WITHOUT_EXTENSION.RAF
 	FUJI_XMP=$FILE_WITHOUT_EXTENSION.xmp
 
-	if [ -f $FUJI_RAF ]; then
-		if [ -f $FUJI_XMP ]; then
-			exiftool -overwrite_original -rating=$RATING $FUJI_XMP
+	if [ -f "$FUJI_RAF" ]; then
+		if [ -f "$FUJI_XMP" ]; then
+			exiftool -overwrite_original -rating=$RATING "$FUJI_XMP"
 		else
-			exiftool -xmp -b $FUJI_RAF > $FUJI_XMP
-			exiftool -overwrite_original -rating=$RATING $FUJI_XMP
+			exiftool -xmp -b "$FUJI_RAF" > "$FUJI_XMP"
+			exiftool -overwrite_original -rating=$RATING "$FUJI_XMP"
 		fi
 	fi
 done
