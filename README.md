@@ -5,7 +5,7 @@ This plugin started as a bash script, which suited my needs, but was not user fr
 
 **NOTE: This plugin is still work in progress, but it should work if you meet the prerequesites (have the exiftool in the correct path and make sure it works).**
 
-**NOTE: Use this plugin at your own risk! If you run it on your whole catalogue, it will overwrite all your RAW (RAF) file ratings with it's JPEGs counterparts. **
+**NOTE: Use this plugin at your own risk!**
 
 ### Prerequesites:
 * Exiftool installed and binary placed in `/usr/local/bin/exiftool` (MAC) or `C:\Windows\exiftool.exe` (Windows). Tested with current latest version `10.43`;
