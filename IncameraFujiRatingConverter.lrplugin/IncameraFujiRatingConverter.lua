@@ -21,7 +21,7 @@ function main()
     -- TODO: show some kind of progress bar and/or notification once the ratings are converted
     LrTasks.startAsyncTask(function()
       local filePath = photo.path
-      local fileWithoutExtension = GetFilePathWithoutExtension(filePath);
+      local fileWithoutExtension = getFilePathWithoutExtension(filePath);
       setRatingForJpgAndRaf(fileWithoutExtension)
     end)
   end
@@ -32,12 +32,12 @@ function getFilePathWithoutExtension(url)
 end
 
 function setRatingForJpgAndRaf(fileWithoutExtension)
-  local jpgFile = GetJpgFile(fileWithoutExtension)
+  local jpgFile = getJpgFile(fileWithoutExtension)
 
   if jpgFile then
-    local rating = GetRatingFromFile(jpgFile)
+    local rating = getRatingFromFile(jpgFile)
     if rating then
-      local rafFile = GetRafFile(fileWithoutExtension)
+      local rafFile = getRafFile(fileWithoutExtension)
       setRating(jpgFile, rating)
 
       if rafFile then
@@ -51,13 +51,13 @@ end
 function getJpgFile(fileWithoutExtension)
   -- TODO: make this work by ignoring letter case
   local supportedJpgFileExtensions = {'.JPG', '.jpg'}
-  return GetFile(fileWithoutExtension, supportedJpgFileExtensions)
+  return getFile(fileWithoutExtension, supportedJpgFileExtensions)
 end
 
 function getRafFile(fileWithoutExtension)
   -- TODO: make this work by ignoring letter case
   local supportedRafFileExtensions = {'.RAF', '.raf'}
-  return GetFile(fileWithoutExtension, supportedRafFileExtensions)
+  return getFile(fileWithoutExtension, supportedRafFileExtensions)
 end
 
 function getFile(fileWithoutExtension, extensions)
